@@ -1,0 +1,14 @@
+- name: Ensure PostgreSQL service is restarted
+  systemd:
+    name: postgresql
+    state: restarted
+- name: Create replication user and grant privileges
+  become_user: postgres
+  postgresql_user:
+    db: postgres
+    name: "{{ replication_user }}"
+    password: "{{ replication_user_password }}"
+    encrypted: yes
+    role_attr_flags: replication
+    state: present
+  when: env == 'master'

@@ -1,0 +1,48 @@
+---
+- name: Add pgdg repo to sources.list.d
+  lineinfile:
+    path: /etc/apt/sources.list.d/pgdg.list
+    line: "deb https://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    create: true
+
+- name: Download PostgreSQL key and add it to system keyring
+  apt_key:
+    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    state: present
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install PostgreSQL and dependencies
+  apt:
+    name: "{{ 'postgresql-' + postgres_version }}"
+    state: present
+
+- name: Set up PostgreSQL service
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started
+
+- name: Config pg_hba.conf file
+  template:
+    src: templates/pg_hba.conf.j2
+    dest: /etc/postgresql/{{ postgres_version }}/main/pg_hba.conf
+  loop: "{{ users }}"
+  when: env == 'master'
+  notify: Reload PostgreSQL
+
+- name: Configure PostgreSQL on replication node
+  template:
+    src: postgresqlreplica.conf.j2
+    dest: /etc/postgresql/{{ postgres_version }}/main/postgresql.conf
+  when: env == 'replica'
+  notify: Reload PostgreSQL
+
+- name: Configure PostgreSQL on master node
+  template:
+    src: postgresql.conf.j2
+    dest: /etc/postgresql/{{ postgres_version }}/main/postgresql.conf
+  when: env == 'master'
+  notify: Reload PostgreSQL

@@ -1,0 +1,4 @@
+---
+- include_tasks: install_apt.yml
+- include_tasks: add_user.yml
+- include_tasks: join_replica.yml

@@ -1,0 +1,13 @@
+postgres_version: "Postgres Version"
+primary_server_ip: "Master server IP"
+replica_ip: "Replica server IP"
+users:
+  - name: "Username"
+    password: "Password"
+
+data_mount_path: "/var/lib/postgresql/{{ postgres_version }}/main"
+data_join_dir: "/var/lib/postgresql/"
+
+replication_user: "Username for connect to DB (Username that set in users.name)"
+replication_user_password: "Password for connect to DB (password that set users.password)"
+replication_db: "DB name for connection (Default is postgres)"

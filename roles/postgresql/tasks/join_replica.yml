@@ -1,0 +1,30 @@
+- name: Stop PostgreSQL
+  service:
+    name: postgresql
+    state: stopped
+  when: env == 'replica'
+- name: Clear out data directory
+  file:
+    path: "{{ data_join_dir }}"
+    state: absent
+  when: env == 'replica'
+- name: Create base backup
+  expect:
+    command: pg_basebackup -R -h {{ primary_server_ip }} -U {{ users.name }} -W -D {{ data_mount_path }}
+    responses:
+      Password: "{{ item.password }}"
+  loop: "{{ users }}"
+  when: env == 'replica'
+- name: Change ansible data owner
+  file:
+    path: "{{ data_join_dir }}"
+    recurse: yes
+    state: directory
+    owner: postgres
+    group: postgres
+  when: env == 'replica'
+- name: Start PostgreSQL
+  service:
+    name: postgresql
+    state: started
+  when: env == 'replica'
