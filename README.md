@@ -16,7 +16,7 @@ cd ansible-postgresql-replica
 - here we need 2 or more IP addresses for the master and replica server.
 
 3. **Edit the Vars file** 
-- Edit the Vars/main.yml file with customized variables.
+- Edit the vars/main.yml file with customized variables.
 
 ```
 - postgres_version: PostgreSQL version to install (e.g., "12", "13", etc.).
@@ -33,6 +33,6 @@ cd ansible-postgresql-replica
 4. **Run the playbook and wait for the cluster init confirmation**
 
 ```
-ansible-playbook -i inventory.ini main.yml
+ansible-playbook -i inventory.ini playbook.yml
 
 ```
