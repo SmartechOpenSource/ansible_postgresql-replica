@@ -10,7 +10,7 @@
     url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
     state: present
 
-- name: Update apt cache
+- name: Update apt-cache
   apt:
     update_cache: yes
 
